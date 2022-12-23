@@ -58,7 +58,7 @@ class FootballBoard extends React.Component {
     super(props);
     this.state = {
       footballBoard: props.footballBoard,
-      summaryBoard: []
+      summaryBoard: [footballWordCupScoreBoard[0]]
     }
     this.startLoop();
   } 
@@ -79,7 +79,7 @@ class FootballBoard extends React.Component {
   
 
   render() {
-    let summary = (this.state.summaryBoard?.length > 0) ? (
+    let summary = (this.state.summaryBoard?.length > 1) ? (
       <React.Fragment>
         <h1>{'Summary'}</h1>
         <Board boardData={this.state.summaryBoard}/>
@@ -158,10 +158,10 @@ function updateMatch(match, time, score, statusIndex) {
 }
 
 function summaryLogic(board, summaryBoard) {
-  let newBoard = board.filter((match) => {
-    
-    return match[4] !== status[4];
+  board = board.filter((match) => {
+    let notFinishedMatch = match[4] !== status[4];
+    if(!notFinishedMatch) summaryBoard.push(match);
+    return notFinishedMatch;
   });
-  console.log(newBoard);
-  return [newBoard, summaryBoard];
+  return [board, summaryBoard];
 }

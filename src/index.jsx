@@ -12,14 +12,21 @@ var footballWordCupScoreBoard = [
   ["17:00", "Uruguay", "Italy", '', status[0]],
   ["Halftime", "Argentina", "Australia", "2-0", status[2]]
 ];
+ 
 
 export class Board extends React.Component {
 
+  constructor(props){
+    super(props);
+    this.state = {
+      boardData: props.boardData ?? []
+    }
+  } 
+
   render() {
     const rowResult = [];
-    console.log('boardData', this.props.boardData);
   
-    this.props.boardData.forEach((data, i) => {
+    this.state.boardData.forEach((data, i) => {
       rowResult.push(
         <Row key={i} labelList={data} isHeader={i===0}/>
       );
@@ -57,7 +64,8 @@ class FootballBoard extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      footballBoard: props.footballBoard
+      footballBoard: props.footballBoard,
+      summaryBoard: []
     }
     this.startLoop();
   } 
@@ -65,24 +73,32 @@ class FootballBoard extends React.Component {
   startLoop() {
     let time = 0;
     const footballInterval = setInterval(() => {
+      let newBoard = matchLogic(time++, this.props.footballBoard);
+      let newState = summaryLogic(newBoard, this.state.summaryBoard);
       this.setState({
-        footballBoard: matchLogic(time++, this.state.footballBoard)
+        footballBoard: newState[0],
+        summaryBoard: newState[1]
       })
-      console.log(time);
-    }, 5000);
+    }, 1000);
 
-    setTimeout(() => clearInterval(footballInterval), 40000);
+    setTimeout(() => clearInterval(footballInterval), 5000);
   }
   
 
   render() {
+    let summary = (this.state.summaryBoard?.length > 0) ? (
+      <React.Fragment>
+        <h1>{'Summary'}</h1>
+        <Board boardData={this.state.summaryBoard}/>
+      </React.Fragment>
+    ) : '';
+
     return (
-      <div>
+      <React.Fragment>
         <h1>{'Matches'}</h1>
         <Board boardData={this.state.footballBoard}/>
-        {/* <h1>{'Summary'}</h1>
-        <Board boardData={footballBoardv2}/> */}
-      </div>
+        {summary}
+      </React.Fragment>
     )
   }
 }
@@ -138,4 +154,13 @@ function updateMatch(match, time, score, statusIndex) {
   match[3] = score;
   match[4] = status[statusIndex];
   return match;
+}
+
+function summaryLogic(board, summaryBoard) {
+  board = board.filter((match) => {
+    
+    return match[4] !== status[4];
+  });
+  console.log(board);
+  return [board, summaryBoard];
 }

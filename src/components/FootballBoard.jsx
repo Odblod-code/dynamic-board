@@ -14,6 +14,7 @@ export class FootballBoard extends React.Component {
 
   startLoop() {
     let time = 0;
+    let slow = 5;
     const footballInterval = setInterval(() => {
       let newBoard = matchLogic(time++, this.state.footballBoard, this.props.footballBoard);
       let newState = summaryLogic(newBoard, this.state.summaryBoard);
@@ -21,9 +22,9 @@ export class FootballBoard extends React.Component {
         footballBoard: newState[0],
         summaryBoard: newState[1]
       });
-    }, 5000);
+    }, 1000 * slow);
 
-    setTimeout(() => clearInterval(footballInterval), 35000);
+    setTimeout(() => clearInterval(footballInterval), 6000 * slow);
   }
 
   render() {
@@ -56,11 +57,11 @@ function matchLogic(loop, board, mainBoard) {
       board[1] = updateMatch(mainBoard[1], "18:00", '', 0);
       board[2] = updateMatch(mainBoard[2], "19:00", '', 0);
       board[3] = updateMatch(mainBoard[3], "HalfTime", '0-0', 2);
-      board[4] = updateMatch(mainBoard[4], "10'", '0-2', 1);
+      board[4] = updateMatch(mainBoard[4], "0'", '0-0', 1);
       board[5] = updateMatch(mainBoard[5], "50'", '3-0', 3);
       break;
     case 1: 
-      board[1] = updateMatch(mainBoard[1], "10'", '0-1', 1);
+      board[1] = updateMatch(mainBoard[1], "0'", '0-0', 1);
       board[2] = updateMatch(mainBoard[2], "19:00", '', 0);
       board[3] = updateMatch(mainBoard[3], "50'", '2-2', 3);
       board[4] = updateMatch(mainBoard[4], "HalfTime", '3-4', 2);
@@ -68,7 +69,7 @@ function matchLogic(loop, board, mainBoard) {
       break;
     case 2: 
       board[1] = updateMatch(mainBoard[1], "HalfTime", '0-3', 2);
-      board[2] = updateMatch(mainBoard[2], "10'", '2-0', 1);
+      board[2] = updateMatch(mainBoard[2], "0'", '0-0', 1);
       board[3] = updateMatch(mainBoard[3], "16:00", '2-2', 4);
       board[4] = updateMatch(mainBoard[4], "50'", '4-4', 3);
       break;
@@ -92,10 +93,10 @@ function matchLogic(loop, board, mainBoard) {
 function summaryLogic(board, summaryBoard) {
   board = board.filter((match) => {
     let notFinishedMatch = match[4] !== status[4];
-    if(!notFinishedMatch) summaryBoard.push(match);
+    if(!notFinishedMatch && !summaryBoard?.includes(match)) summaryBoard.push(match);
     return notFinishedMatch;
   });
-  return [board, summaryBoard];
+  return [board, summaryBoard.sort(summaryComparator)];
 }
 
 function updateMatch(match, time, score, statusIndex) {
@@ -103,4 +104,14 @@ function updateMatch(match, time, score, statusIndex) {
   match[3] = score;
   match[4] = status[statusIndex];
   return match;
+}
+
+function summaryComparator(a,b) {
+  return totalScore(b[3]) - totalScore(a[3]);
+}
+
+function totalScore(score) {
+  return score.split('-').reduce((accumulator, currentValue) =>
+    parseInt(accumulator) + parseInt(currentValue)
+  )
 }

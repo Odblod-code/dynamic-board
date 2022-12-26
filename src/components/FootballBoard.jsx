@@ -13,7 +13,9 @@ export class FootballBoard extends React.Component {
 
   componentDidMount() {
     let time = 0;
-    let slow = 5;
+    const slow = 5;
+    const second = 1000;
+
     const footballInterval = setInterval(() => {
       let newBoard = matchLogic(time++, this.state.footballBoard, this.props.footballBoard);
       let newState = summaryLogic(newBoard, this.state.summaryBoard);
@@ -21,24 +23,24 @@ export class FootballBoard extends React.Component {
         footballBoard: newState[0],
         summaryBoard: newState[1]
       });
-    }, 1000 * slow);
+    }, second * slow);
 
-    setTimeout(() => clearInterval(footballInterval), 6000 * slow);
+    setTimeout(() => clearInterval(footballInterval), second * slow * this.props.footballBoard.length);
   }
 
   render() {
     let summary = (this.state.summaryBoard?.length > 1) ? (
-      <React.Fragment>
+      <div  data-testid="summary">
         <h1>{'Summary'}</h1>
         <Board boardData={this.state.summaryBoard} />
-      </React.Fragment>
+      </div>
     ) : '';
 
     let mainBoard = (this.state.footballBoard?.length > 1) ? (
-      <React.Fragment>
+      <div data-testid="match">
         <h1>{'Matches'}</h1>
         <Board boardData={this.state.footballBoard} />
-      </React.Fragment>
+      </div>
     ) : '';
 
     return (

@@ -9,10 +9,9 @@ export class FootballBoard extends React.Component {
       footballBoard: props.footballBoard,
       summaryBoard: [props.footballBoard[0]]
     };
-    this.startLoop();
   }
 
-  startLoop() {
+  componentDidMount() {
     let time = 0;
     let slow = 5;
     const footballInterval = setInterval(() => {

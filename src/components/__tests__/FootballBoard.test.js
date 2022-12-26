@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import React from 'react';
 import { status } from "../..";
 import { Board } from "../Board";
@@ -13,10 +13,6 @@ const footballWordCupScoreBoard = [
   ["17:00", "Uruguay", "Italy", '', status[0]],
   ["Halftime", "Argentina", "Australia", "2-0", status[2]]
 ];
-
-beforeEach(() => {
-  jest.useFakeTimers();
-});
 
 describe("Board", () => {
 
@@ -55,12 +51,21 @@ describe("Board", () => {
   });
 
   test('match logic works', async () => {
-    const board = new FootballBoard({footballBoard: footballWordCupScoreBoard});
-    expect(board.state.footballBoard).toBe(footballWordCupScoreBoard);
-    expect(board.state.footballBoard.length).toBe(6);
-    expect(board.state.summaryBoard).toStrictEqual([footballWordCupScoreBoard[0]]);
+    jest.useFakeTimers();
+    render(<FootballBoard footballBoard={footballWordCupScoreBoard}/>);
     
-    jest.advanceTimersByTime(15000);
-    expect(board.state.summaryBoard.length).toBe(3);
+    act(() => {
+      jest.advanceTimersByTime(30000);
+    })
+    const match1 = screen.getByText("3-1");
+    expect(match1).toBeInTheDocument();
+    const match2 = screen.getByText("2-2");
+    expect(match2).toBeInTheDocument();
+    const match3 = screen.getByText("6-6");
+    expect(match3).toBeInTheDocument();
+    const match4 = screen.getByText("0-5");
+    expect(match4).toBeInTheDocument();
+    const match5 = screen.getByText("10-2");
+    expect(match5).toBeInTheDocument();
   })
 });

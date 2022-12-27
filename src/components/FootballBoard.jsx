@@ -14,6 +14,7 @@ export class FootballBoard extends React.Component {
   componentDidMount() {
     let time = 0;
 
+    // This interval has the logic to update all the matches each 5 seconds
     const footballInterval = setInterval(() => {
       let newBoard = matchLogic(time++, this.state.footballBoard, this.props.footballBoard);
       let newState = summaryLogic(newBoard, this.state.summaryBoard);
@@ -50,6 +51,7 @@ export class FootballBoard extends React.Component {
   }
 }
 
+// Function to update the data for the matches
 function matchLogic(loop, board, mainBoard) {
   let boardUpdate = [...board];
   switch(loop) {
@@ -90,15 +92,18 @@ function matchLogic(loop, board, mainBoard) {
   return boardUpdate;
 }
 
+// Function that remove from main board the matches ended, adding this ones for summary board
 function summaryLogic(board, summaryBoard) {
   board = board.filter((match) => {
     let notFinishedMatch = match[4] !== status[4];
     if(!notFinishedMatch && !summaryBoard?.includes(match)) summaryBoard.push(match);
     return notFinishedMatch;
   });
+
   return [board, summaryBoard.sort(summaryComparator)];
 }
 
+// Function that return sended match updated by time, score and status
 function updateMatch(match, time, score, statusIndex) {
   let resultMatch = [...match];
   resultMatch[0] = time;
@@ -107,10 +112,12 @@ function updateMatch(match, time, score, statusIndex) {
   return resultMatch;
 }
 
+// Comparator to order matches by total score
 function summaryComparator(a,b) {
   return totalScore(b[3]) - totalScore(a[3]);
 }
 
+// returns the total score from string value adding both numers separated by "-"
 function totalScore(score) {
   return score.split('-').reduce((accumulator, currentValue) =>
     parseInt(accumulator) + parseInt(currentValue)

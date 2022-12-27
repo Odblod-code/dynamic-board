@@ -1,0 +1,13 @@
+.dynamic-board {
+    text-align: center;
+
+    & .row {
+        & > * {
+            width: 100px;
+        }
+
+        &:nth-child(even) {
+            background-color: rgba(150, 212, 212, 0.4);
+        }
+    }
+}

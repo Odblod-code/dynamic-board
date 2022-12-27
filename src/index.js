@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
+import ReactDOM from "react-dom";
 import { FootballBoard } from "./components/FootballBoard";
 import "./index.scss";
 
@@ -14,9 +14,7 @@ const footballWordCupScoreBoard = [
   ["Halftime", "Argentina", "Australia", "2-0", status[2], "No"]
 ];
 
-const elementRef = document.getElementById("root");
-
-if(elementRef) {
-    const root = ReactDOM.createRoot(elementRef);
-    root.render(<FootballBoard footballBoard={footballWordCupScoreBoard}/>);
-}
+ReactDOM.render(
+  <FootballBoard footballBoard={footballWordCupScoreBoard}/>, 
+  document.getElementById('root')
+);
